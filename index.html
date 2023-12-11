@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Test API Profs</title>
+</head>
+<body>
+    <h1>Test API Profs</h1>
+
+    <!-- Formulaire pour ajouter un prof -->
+    <h2>Ajouter un Prof</h2>
+    <form id="addProfForm">
+        <input type="text" id="profName" placeholder="Nom" required>
+        <!-- Ajoutez ici d'autres champs nécessaires -->
+        <input type="text" id="profEmail" placeholder="Email" required>
+
+        <input type="text" id="profMatier" placeholder="Matier" required>
+
+        <button type="submit">Ajouter</button>
+    </form>
+
+    <!-- Liste des profs -->
+    <h2>Liste des Profs</h2>
+    <button id="getProfs">Afficher les Profs</button>
+    <ul id="profsList"></ul>
+
+    <!-- Formulaire pour mettre à jour un prof -->
+    <h2>Mettre à jour un Prof</h2>
+    <form id="updateProfForm">
+        <input type="number" id="updateProfId" placeholder="ID du Prof" required>
+        <input type="text" id="updateProfName" placeholder="Nouveau Nom">
+        <!-- Ajoutez ici d'autres champs nécessaires -->
+        <button type="submit">Mettre à jour</button>
+    </form>
+
+    <!-- Formulaire pour supprimer un prof -->
+    <h2>Supprimer un Prof</h2>
+    <!-- Formulaire pour supprimer un prof -->
+<h2>Supprimer un Prof</h2>
+<form id="deleteProfForm">
+    <input type="number" id="deleteProfId" placeholder="ID du Prof" required>
+    <button type="submit">Supprimer</button>
+</form>
+
+
+    <script>
+        document.getElementById('addProfForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const profName = document.getElementById('profName').value;
+            const profEmail = document.getElementById('profEmail').value;
+            const profMatiere = document.getElementById('profMatier').value; // Assurez-vous que l'ID est correct
+        
+            try {
+                const response = await fetch('/addprofs', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        nom: profName,
+                        email: profEmail,
+                        matiere: profMatiere
+                    })
+                });
+                const result = await response.json();
+                console.log(result);
+            } catch (error) {
+                console.error('Erreur:', error);
+            }
+        });
+        
+
+        // Fonction pour récupérer la liste des profs
+        document.getElementById('getProfs').addEventListener('click', async function() {
+            try {
+                const response = await fetch('/profs');
+                const profs = await response.json();
+                const profsList = document.getElementById('profsList');
+                profsList.innerHTML = '';
+                profs.forEach(prof => {
+                    const li = document.createElement('li');
+                    li.textContent = `ID: ${prof.id}, Nom: ${prof.nom} ,Email: ${prof.email},Matier: ${prof.matiere}`;
+                    profsList.appendChild(li);
+                });
+            } catch (error) {
+                console.error('Erreur:', error);
+            }
+        });
+
+        // Ajoutez ici des fonctions pour les requêtes PUT (mise à jour) et DELETE
+        document.getElementById('updateProfForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const id = document.getElementById('updateProfId').value;
+            const newName = document.getElementById('updateProfName').value;
+            // Ajoutez ici la récupération d'autres champs si nécessaire
+        
+            try {
+                const response = await fetch('/updateprofs/' + id, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        nom: newName
+                        // autres champs si nécessaire
+                    })
+                });
+                const result = await response.json();
+                console.log(result);
+                // Mettre à jour l'affichage ou notifier l'utilisateur de la réussite
+            } catch (error) {
+                console.error('Erreur:', error);
+                // Gérer l'erreur dans l'interface utilisateur
+            }
+        });
+
+
+
+        // Event listener for the delete form
+    document.getElementById('deleteProfForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const id = document.getElementById('deleteProfId').value;
+
+        try {
+            const response = await fetch('/profs/' + id, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            });
+            const result = await response.json();
+
+            if(response.ok) {
+                console.log('Prof supprimé:', result);
+                // You can also update the UI here to reflect the deletion
+            } else {
+                console.error('Erreur lors de la suppression:', result);
+            }
+        } catch (error) {
+            console.error('Erreur:', error);
+        }
+    });
+
+        
+    </script>
+</body>
+</html>

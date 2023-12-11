@@ -1,0 +1,28 @@
+version: '3.8'
+services:
+  app:
+    build: .
+    volumes:
+      - .:/app
+      - /app/node_modules
+    ports:
+      - "3000:3000"
+    environment:
+      - DATABASE_HOST=db
+      - DATABASE_USER=postgres # Remplacez par votre utilisateur de base de données
+      - DATABASE_PASSWORD=chadded223 # Remplacez par votre mot de passe de base de données
+      - DATABASE_NAME=miniproject # Nom de votre base de données
+    depends_on:
+      - db
+
+  db:
+    image: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=postgres # Remplacez par votre utilisateur de base de données
+      - POSTGRES_PASSWORD=chadded223 # Remplacez par votre mot de passe de base de données
+      - POSTGRES_DB=miniproject # Nom de votre base de données
+
+volumes:
+  postgres_data:
